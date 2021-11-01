@@ -2,7 +2,8 @@ import { Button } from "@mui/material";
 import React, { useState } from "react";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
-import { LineJoinStyle, PDFDocument } from "pdf-lib";
+import { decodeFromBase64, LineJoinStyle, PDFDocument } from "pdf-lib";
+import { pdfObject } from "../pdfObject";
 
 export default function Conversion() {
   const [downloadLink, setDownloadLink] = useState(null);
@@ -18,39 +19,24 @@ export default function Conversion() {
     },
   };
 
-  //   const handlePdf = () => {
-  //     console.log("downloading pdf");
-  //     const docDefinition = {
-  //       content: "Esto es un pdf de prueba",
-  //     };
-  //     pdfMake.createPdf(docDefinition, null, fonts).download();
-  //   };
+ 
 
   const handlePDF = async () => {
+    const pdfSticker1 = decodeFromBase64(pdfObject[0].label); 
     const pdfDoc = await PDFDocument.create();
     const page = pdfDoc.addPage();
     page.drawText("this is my pdf", { x: 25, y: 800 });
     const pdfBytes = await pdfDoc.save();
-    const pdfDocument = new Blob([pdfBytes], { type: "text/pdf" });
+
+    const pdfDocument = new Blob([pdfDoc], { type: "text/pdf" });
     const link = document.createElement("a");
     link.href = window.URL.createObjectURL(pdfDocument);
     link.download ="myPdf.pdf"; 
     link.click();
+    
   };
 
-//   const handlePDFLib = async () => {
-//     const pdfDoc = await PDFDocument.create();
-//     const page = pdfDoc.addPage();
-//     page.drawText("This is my first pdf");
-//     const pdfBytes = await pdfDoc.save();
-//     const pdfDocument = new Blob([pdfBytes], { type: "text/pdf" });
-//     // if (downloadLink !== null) window.URL.revokeObjectURL(downloadLink);
-//     // setDownloadLink(window.URL.createObjectURL(pdfDocument));
-//     const link = document.createElement("a");
-//     link.href = window.URL.createObjectURL(pdfDocument);
-//     link.download = "myPDF.pdf";
-//     link.click();
-//   };
+
 
   return (
     <>
